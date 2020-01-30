@@ -1,18 +1,21 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import App from './App';
-import Todo from '../api/models/todo'
+import Users from '../api/models/users'
 
-test('unit test todo list functions', () => {
-  let todo = new Todo();
-	
-	expect(todo.getAllItems().length).toBe(2);
-	
-	expect(()=>{ todo.addItem(2) }).toThrow(Error);
-	expect(todo.addItem('test item')).toBe(undefined);
-	
-	expect(()=>{ todo.removeItem(3) }).toThrow(Error);
-	expect(todo.removeItem(2)).toBe(undefined);
-	
-	expect(todo.getAllItems().length).toBe(2);
+test('unit test users functions', () => {
+  let allUsers = new Users();
+
+  allUsers.getAllUsers((data)=>{
+    data = JSON.parse(data);
+    //expect(data.length).toBe(2);
+  });
+
+  expect(()=>{ allUsers.addUser(2, x=>{}); }).toThrow(Error);
+  expect(()=>{ allUsers.addUser('', x=>{}); }).toThrow(Error);
+  allUsers.addUser('new user1', (data)=>{
+    expect(data).toBe(true);
+  });
+
+  //expect(()=>{ allUsers.removeUser(-1, x=>{}); }).toThrow(Error);
 });

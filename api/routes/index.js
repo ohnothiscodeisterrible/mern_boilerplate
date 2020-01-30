@@ -1,26 +1,28 @@
 var express = require('express');
-var Todo = require('../models/todo');
+var Users = require('../models/users');
 var router = express.Router();
 
-var mainTodo = new Todo();
+var allUsers = new Users();
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.get('/todo/get', function(req, res, next) {
+router.get('/user/get', function(req, res, next) {
 	res.setHeader('Content-Type', 'application/json');
-	res.end(JSON.stringify(mainTodo.getAllItems()));
+  allUsers.getAllUsers((result)=>{
+    res.end(result);
+  });
 });
 
-router.post('/todo/add', function(req, res, next) {
+router.post('/user/add', function(req, res, next) {
 	if(req.body.hasOwnProperty('item')){
 		try {
-			mainTodo.addItem(req.body.item);
 			res.setHeader('Content-Type', 'application/json');
-			res.end(JSON.stringify(mainTodo.getAllItems()));
-		}
-		catch (err){
+      allUsers.addUser(req.body.item, (result)=>{
+        res.end(result.toString());
+      });
+		} catch (err){
 			res.status(500).send(JSON.stringify(err));
 		}
 	} else {
@@ -28,14 +30,14 @@ router.post('/todo/add', function(req, res, next) {
 	}
 });
 
-router.delete('/todo/remove/:index', function(req, res, next) {
+router.delete('/user/remove/:index', function(req, res, next) {
 	if(req.params.hasOwnProperty('index')){
-		try {
-			mainTodo.removeItem(req.params.index);
+    try {
 			res.setHeader('Content-Type', 'application/json');
-			res.end(JSON.stringify(mainTodo.getAllItems()));
-		}
-		catch (err){
+      allUsers.removeUser(req.params.index, (result)=>{
+        res.end(result.toString());
+      });
+		} catch (err){
 			res.status(500).send(JSON.stringify(err));
 		}
 	} else {
