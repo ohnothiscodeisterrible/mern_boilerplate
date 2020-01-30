@@ -8,6 +8,7 @@ class User extends Component {
 
 handleErrors(response) {
 	if (!response.ok) {
+		console.log(response);
     this.throwError(response.statusText);
   }
   return response;

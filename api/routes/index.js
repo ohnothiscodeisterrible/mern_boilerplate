@@ -12,7 +12,8 @@ router.get('/user/get', function(req, res, next) {
 	res.setHeader('Content-Type', 'application/json');
   allUsers.getAllUsers((error, result)=>{
     if(error){
-      res.status(error.code).send({ 'message' : error.message });
+      res.statusMessage = error.message;
+      res.status(error.code).end();
     } else {
       res.end(result);
     }
@@ -25,16 +26,19 @@ router.post('/user/add', function(req, res, next) {
 			res.setHeader('Content-Type', 'application/json');
       allUsers.addUser(req.body.item, (error, result)=>{
         if(error){
-          res.status(error.code).send({ 'message' : error.message });
+          res.statusMessage = error.message;
+          res.status(error.code).end();
         } else {
           res.end(result.toString());
         }
       });
 		} catch (error){
-			res.status(error.code).send({ 'message' : error.message });
+      res.statusMessage = error.message;
+			res.status(error.code).end();
 		}
 	} else {
-		res.status(400).send('Username not supplied');
+    res.statusMessage = 'Username not supplied';
+		res.status(400).end();
 	}
 });
 
@@ -44,16 +48,19 @@ router.delete('/user/remove/:index', function(req, res, next) {
 			res.setHeader('Content-Type', 'application/json');
       allUsers.removeUser(req.params.index, (error, result)=>{
         if(error){
-          res.status(error.code).send({ 'message' : error.message });
+          res.statusMessage = error.messsage;
+          res.status(error.code).end();
         } else {
           res.end(result.toString());
         }
       });
 		} catch (error){
-			res.status(error.code).send({ 'message' : error.message });
+      res.statusMessage = error.message;
+			res.status(error.code).end();
 		}
 	} else {
-    res.status(400).send({ 'message' : 'Id not supplied' });
+    res.statusMessage = 'Id not supplied';
+    res.status(400).end();
 	}
 });
 
