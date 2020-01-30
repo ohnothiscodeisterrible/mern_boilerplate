@@ -14,13 +14,29 @@ class Users {
 	throwError(errorText){
 		let err = new Error(errorText);
 		err.code = 400;
-		throw err;
+		return err;
+	}
+
+	deleteAllUsers(callback){
+		sql.deleteAllUsers((error, results)=>{
+			callback(error, results);
+		});
 	}
 
 	getAllUsers(callback){
-		sql.getAllUsers((result)=>{
+		sql.getAllUsers((error, result)=>{
+			if(error){ callback(error); }
 			this.items = result;
-			callback(JSON.stringify(this.items));
+			callback(null, JSON.stringify(this.items));
+		});
+	}
+
+	getUserByUsername(username, callback){
+		sql.getUserByUsername(username, (error, result)=>{
+			if(result.length === 0){
+				callback(error);
+			}
+			callback(null, result[0]);
 		});
 	}
 
@@ -28,25 +44,28 @@ class Users {
 		if(typeof user === 'string'){
 			user = user.trim();
 	    if(user.length === 0){
-	      this.throwError('Username must be a valid string with at least 1 character');
+	      callback(this.throwError('Username must be a valid string with at least 1 character'));
 	    } else {
-				sql.addUser(user, (result)=>{
-					callback(true);
+				sql.addUser(user, (error, result)=>{
+					if(error){ callback(error); }
+					callback(null, true);
 				});
 			}
 		} else {
-			this.throwError('Username may only be a string');
+			callback(this.throwError('Username may only be a string'));
 		}
 	}
 
 	removeUser(index, callback){
-		sql.getUser(index, (currentUser)=>{
-			if(currentUser.length == 1){
-				sql.removeUser(index, (result)=>{
-					callback(true);
+		sql.getUser(index, (error, currentUser)=>{
+			if(error){ callback(error, currentUser); }
+			if(currentUser.length === 1){
+				sql.removeUser(index, (error1, result1)=>{
+					if(error1){ callback(error1); }
+					callback(null, true);
 				});
 			} else {
-				this.throwError('No user exists with that id');
+				callback(this.throwError('No user exists with that id'));
 			}
 		});
 	}

@@ -9,9 +9,14 @@ class SqlObject {
 
   query(sql, values, callback){
     this.connection.query(sql, values, function (error, results, fields) {
-      if (error) throw error;
-      callback(JSON.parse(JSON.stringify(results)));
+      callback(error, JSON.parse(JSON.stringify(results)));
     }.bind(this));
+  }
+
+  deleteAllUsers(callback){
+    let sql = "DELETE FROM Users";
+    let values = [];
+    this.query(sql, values, callback);
   }
 
   getAllUsers(callback){
@@ -23,6 +28,12 @@ class SqlObject {
   getUser(id, callback){
     let sql = "SELECT * FROM Users WHERE id = ?";
     let values = [id];
+    this.query(sql, values, callback);
+  }
+
+  getUserByUsername(username, callback){
+    let sql = "SELECT * FROM Users WHERE username = ?";
+    let values = [username];
     this.query(sql, values, callback);
   }
 

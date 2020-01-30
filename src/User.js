@@ -6,7 +6,14 @@ class User extends Component {
 	    this.state = { user : '', newItem : '', error : { visible : 'false', text : '' } }
 	}
 
-	handleError(error){
+handleErrors(response) {
+	if (!response.ok) {
+    this.throwError(response.statusText);
+  }
+  return response;
+}
+
+	throwError(error){
 		this.setState({ error : { visible :  true, text : error.toString() }});
 		setTimeout(()=>{ this.setState({ error : { visible :  false, text : '' }}) }, 5000);
 	}
@@ -15,7 +22,7 @@ class User extends Component {
 	    fetch('http://localhost:9000/user/get')
 	    	.then(res => res.text())
 	    	.then(res => this.setState({ user : JSON.parse(res) }))
-				.catch(err => this.handleError(err));
+				.catch(err => this.throwError(err));
 	}
 
 	componentDidMount() {
@@ -28,10 +35,11 @@ class User extends Component {
 
 	addUser(){
 		fetch('http://localhost:9000/user/add', { method : 'post', headers: { "Content-Type": "application/json" }, body : JSON.stringify({ item : this.state.newItem }) })
-  		.then(res => res.text())
+			.then(res => this.handleErrors(res))
+			.then(res => res.text())
   		.then(res => this.setState({ newItem : '' }))
 			.then(res => this.getUser())
-			.catch(err => this.handleError(err));
+			.catch(err => this.throwError(err));
 	}
 
 	deleteUser(id, e){
@@ -39,7 +47,7 @@ class User extends Component {
 		fetch('http://localhost:9000/user/remove/' + id, { method : 'delete' })
   		.then(res => res.text())
   		.then(res => this.getUser())
-			.catch(err => this.handleError(err));
+			.catch(err => this.throwError(err));
 	}
 
 	render(){

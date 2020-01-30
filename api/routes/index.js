@@ -10,8 +10,12 @@ router.get('/', function(req, res, next) {
 
 router.get('/user/get', function(req, res, next) {
 	res.setHeader('Content-Type', 'application/json');
-  allUsers.getAllUsers((result)=>{
-    res.end(result);
+  allUsers.getAllUsers((error, result)=>{
+    if(error){
+      res.status(error.code).send({ 'message' : error.message });
+    } else {
+      res.end(result);
+    }
   });
 });
 
@@ -19,14 +23,18 @@ router.post('/user/add', function(req, res, next) {
 	if(req.body.hasOwnProperty('item')){
 		try {
 			res.setHeader('Content-Type', 'application/json');
-      allUsers.addUser(req.body.item, (result)=>{
-        res.end(result.toString());
+      allUsers.addUser(req.body.item, (error, result)=>{
+        if(error){
+          res.status(error.code).send({ 'message' : error.message });
+        } else {
+          res.end(result.toString());
+        }
       });
-		} catch (err){
-			res.status(500).send(JSON.stringify(err));
+		} catch (error){
+			res.status(error.code).send({ 'message' : error.message });
 		}
 	} else {
-		res.status(500).send('Correct parameters not supplied');
+		res.status(400).send('Username not supplied');
 	}
 });
 
@@ -34,14 +42,18 @@ router.delete('/user/remove/:index', function(req, res, next) {
 	if(req.params.hasOwnProperty('index')){
     try {
 			res.setHeader('Content-Type', 'application/json');
-      allUsers.removeUser(req.params.index, (result)=>{
-        res.end(result.toString());
+      allUsers.removeUser(req.params.index, (error, result)=>{
+        if(error){
+          res.status(error.code).send({ 'message' : error.message });
+        } else {
+          res.end(result.toString());
+        }
       });
-		} catch (err){
-			res.status(500).send(JSON.stringify(err));
+		} catch (error){
+			res.status(error.code).send({ 'message' : error.message });
 		}
 	} else {
-		res.status(500).send('Correct parameters not supplied');
+    res.status(400).send({ 'message' : 'Id not supplied' });
 	}
 });
 

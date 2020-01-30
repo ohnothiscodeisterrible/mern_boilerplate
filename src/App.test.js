@@ -6,16 +6,37 @@ import Users from '../api/models/users'
 test('unit test users functions', () => {
   let allUsers = new Users();
 
-  allUsers.getAllUsers((data)=>{
-    data = JSON.parse(data);
-    //expect(data.length).toBe(2);
+  allUsers.deleteAllUsers((error, result)=>{
+    allUsers.getAllUsers((error1, result1)=>{
+      let data = JSON.parse(result1);
+      expect(data.length).toBe(0);
+
+      allUsers.addUser(2, (error2,result2)=>{
+        expect(error2 !== null).toBe(true);
+      });
+      allUsers.addUser('', (error2,result2)=>{
+        expect(error2 !== null).toBe(true);
+      });
+      allUsers.addUser('new user 1', (error2, result2)=>{
+        expect(result2).toBe(true);
+        allUsers.getUserByUsername('new user 3', (error3, result3)=>{
+          allUsers.removeUser(result3.id, (error4, result4)=>{
+            expect(error4 === null && result4).toBe(true);
+          });
+        });
+      });
+      allUsers.addUser('new user 2', (error2, result2)=>{
+        expect(result2).toBe(true);
+      });
+      allUsers.addUser('new user 3', (error2, result2)=>{
+        expect(result2).toBe(true);
+      });
+
+      allUsers.removeUser(-1, (error2,result2)=>{
+        expect(error2 !== null).toBe(true);
+      });
+
+    });
   });
 
-  expect(()=>{ allUsers.addUser(2, x=>{}); }).toThrow(Error);
-  expect(()=>{ allUsers.addUser('', x=>{}); }).toThrow(Error);
-  allUsers.addUser('new user1', (data)=>{
-    expect(data).toBe(true);
-  });
-
-  //expect(()=>{ allUsers.removeUser(-1, x=>{}); }).toThrow(Error);
 });
