@@ -16,5 +16,5 @@ In the api directory, you can run:
 
 To run the application:
 
-### Navigate to the project directory, run 'npm start'
-### Naviagte to the project/api directory, run 'npm start'
+1) Navigate to the project directory, run 'npm start'
+2) Naviagte to the project/api directory, run 'npm start'
